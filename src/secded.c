@@ -1,32 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define BIT(x, n) ((x >> n) & 1)
 
-int32_t secded_encode(int16_t x) {
-    int8_t x0 = BIT(x, 0);
-    int8_t x1 = BIT(x, 1);
-    int8_t x2 = BIT(x, 2);
-    int8_t x3 = BIT(x, 3);
-    int8_t x4 = BIT(x, 4);
-    int8_t x5 = BIT(x, 5);
-    int8_t x6 = BIT(x, 6);
-    int8_t x7 = BIT(x, 7);
-    int8_t x8 = BIT(x, 8);
-    int8_t x9 = BIT(x, 9);
-    int8_t x10 = BIT(x, 10);
-    int8_t x11 = BIT(x, 11);
-    int8_t x12 = BIT(x, 12);
-    int8_t x13 = BIT(x, 13);
-    int8_t x14 = BIT(x, 14);
-    int8_t x15 = BIT(x, 15);
+uint32_t secded_encode(uint32_t x) {
+    uint32_t x0 = BIT(x, 0);
+    uint32_t x1 = BIT(x, 1);
+    uint32_t x2 = BIT(x, 2);
+    uint32_t x3 = BIT(x, 3);
+    uint32_t x4 = BIT(x, 4);
+    uint32_t x5 = BIT(x, 5);
+    uint32_t x6 = BIT(x, 6);
+    uint32_t x7 = BIT(x, 7);
+    uint32_t x8 = BIT(x, 8);
+    uint32_t x9 = BIT(x, 9);
+    uint32_t x10 = BIT(x, 10);
+    uint32_t x11 = BIT(x, 11);
+    uint32_t x12 = BIT(x, 12);
+    uint32_t x13 = BIT(x, 13);
+    uint32_t x14 = BIT(x, 14);
+    uint32_t x15 = BIT(x, 15);
 
-    int8_t p0 = x15 ^ x13 ^ x11 ^ x10 ^ x8 ^ x6 ^ x4 ^ x3 ^ x1 ^ x0;
-    int8_t p1 = x13 ^ x12 ^ x10 ^ x9 ^ x6 ^ x5 ^ x3 ^ x2 ^ x0;
-    int8_t p2 = x15 ^ x14 ^ x10 ^ x9 ^ x8 ^ x7 ^ x3 ^ x2 ^ x1;
-    int8_t p3 = x10 ^ x9 ^ x8 ^ x7 ^ x6 ^ x5 ^ x4;
-    int8_t p4 = x15 ^ x14 ^ x13 ^ x12 ^ x11;
-    int8_t p5 = x15 ^ x14 ^ x13 ^ x12 ^ x11 ^ x10 ^ x9 ^ x8 ^ x7 ^ x6 ^ x5
+    uint32_t p0 = x15 ^ x13 ^ x11 ^ x10 ^ x8 ^ x6 ^ x4 ^ x3 ^ x1 ^ x0;
+    uint32_t p1 = x13 ^ x12 ^ x10 ^ x9 ^ x6 ^ x5 ^ x3 ^ x2 ^ x0;
+    uint32_t p2 = x15 ^ x14 ^ x10 ^ x9 ^ x8 ^ x7 ^ x3 ^ x2 ^ x1;
+    uint32_t p3 = x10 ^ x9 ^ x8 ^ x7 ^ x6 ^ x5 ^ x4;
+    uint32_t p4 = x15 ^ x14 ^ x13 ^ x12 ^ x11;
+    uint32_t p5 = x15 ^ x14 ^ x13 ^ x12 ^ x11 ^ x10 ^ x9 ^ x8 ^ x7 ^ x6 ^ x5
                 ^ x4 ^ x3 ^ x2 ^ x1 ^ x0 ^ p0 ^ p1 ^ p2 ^ p3 ^ p4 ^ p4;
 
     return p0 | (p1 << 1) | (x0 << 2) | (p2 << 3) | (x1 << 4) | (x2 << 5)
@@ -41,10 +42,10 @@ int16_t secded_decode(int32_t c) {
 }
 
 int main(int argc, char* argv[]) {
-    int16_t x = atoi(argv[1]);
-    int32_t c = secded_encode(x);
+    uint32_t x = atoi(argv[1]);
+    uint32_t c = secded_encode(x);
 
-    printf("decoded: %d\n", c);
+    printf("encoded: %d\n", c);
 
     return 0;
 }
