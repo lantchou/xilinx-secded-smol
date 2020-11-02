@@ -3,23 +3,6 @@
 #include <stdint.h>
 #include "secded.h"
 
-// some macros to print an integer in binary format
-#define PRINTF_BINARY_PATTERN_INT8 "%c%c%c%c%c%c%c%c"
-#define PRINTF_BYTE_TO_BINARY_INT8(i)    \
-    (((i) & 0x80ll) ? '1' : '0'), \
-    (((i) & 0x40ll) ? '1' : '0'), \
-    (((i) & 0x20ll) ? '1' : '0'), \
-    (((i) & 0x10ll) ? '1' : '0'), \
-    (((i) & 0x08ll) ? '1' : '0'), \
-    (((i) & 0x04ll) ? '1' : '0'), \
-    (((i) & 0x02ll) ? '1' : '0'), \
-    (((i) & 0x01ll) ? '1' : '0')
-
-#define PRINTF_BINARY_PATTERN_INT16 \
-    PRINTF_BINARY_PATTERN_INT8              PRINTF_BINARY_PATTERN_INT8
-#define PRINTF_BYTE_TO_BINARY_INT16(i) \
-    PRINTF_BYTE_TO_BINARY_INT8((i) >> 8),   PRINTF_BYTE_TO_BINARY_INT8(i)
-
 // macro to get nth bit from an integer x
 #define BIT(x, n) ((x >> n) & 1)
 
@@ -125,23 +108,5 @@ int secded_decode(int32_t c, int16_t* x) {
         | (BIT(c, 18) << 13) | (BIT(c, 19) << 14) | (BIT(c, 20) << 15);
 
     return status;
-}
-
-int main(int argc, char* argv[]) {
-    char* endptr;
-    int16_t x = strtol(argv[1], &endptr, 2);
-    int32_t c = secded_encode(x);
-
-    // artificially flip one bit
-    c ^= (1 << 17);
-    
-    int16_t d;
-    int status = secded_decode(c, &d);
-
-    printf("status: %d\n", status);
-    printf("decoded: " PRINTF_BINARY_PATTERN_INT16 "\n",
-            PRINTF_BYTE_TO_BINARY_INT16(d));
-
-    return 0;
 }
 
