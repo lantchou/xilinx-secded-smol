@@ -12,9 +12,9 @@ void test_no_errors() {
     for (int i = 0; i < LOOP_SIZE; i++) {
         int16_t d = RANDOM_WORD;
         int32_t c = secded_encode(d);
-        int16_t r;
-        int status = secded_decode(c, &r);
-        fails = (d == r && status == 0)
+        int32_t c_decoded;
+        int status = secded_decode(c, &c_decoded);
+        fails = (c == c_decoded && status == STATUS_NO_ERR)
             ? fails
             : fails + 1;
     }
@@ -31,10 +31,11 @@ void test_parity_error() {
     for (int i = 0; i < LOOP_SIZE; i++) {
         int16_t d = RANDOM_WORD;
         int32_t c = secded_encode(d);
-        c ^= (1 << 21);
-        int16_t r;
-        int status = secded_decode(c, &r);
-        fails = (d == r && status == 1)
+        int32_t c_altered = c;
+        c_altered ^= (1 << 21);
+        int32_t c_decoded;
+        int status = secded_decode(c_altered, &c_decoded);
+        fails = (c_decoded == c && status == STATUS_PARITY_ERR)
             ? fails
             : fails + 1;
     }
@@ -52,10 +53,11 @@ void test_single_error() {
         int16_t d = RANDOM_WORD;
         int32_t c = secded_encode(d);
         int pos = rand() % 21;
-        c ^= (1 << pos);
-        int16_t r;
-        int status = secded_decode(c, &r);
-        fails = (d == r && status == 2)
+        int32_t c_altered = c;
+        c_altered ^= (1 << pos);
+        int32_t c_decoded;
+        int status = secded_decode(c_altered, &c_decoded);
+        fails = (c_decoded == c && status == STATUS_SINGLE_ERR)
             ? fails
             : fails + 1;
     }
@@ -76,12 +78,13 @@ void test_double_error() {
         int pos1 = rand() % 21;
         int pos2;
         while ((pos2 = rand() % 21) == pos1);
-        c ^= (1 << pos1);
-        c ^= (1 << pos2);
+        int32_t c_altered = c;
+        c_altered ^= (1 << pos1);
+        c_altered ^= (1 << pos2);
 
-        int16_t r;
-        int status = secded_decode(c, &r);
-        fails = status == -1
+        int32_t c_decoded;
+        int status = secded_decode(c_altered, &c_decoded);
+        fails = c_decoded != c && status == STATUS_DOUBLE_ERR
             ? fails
             : fails + 1;
     }

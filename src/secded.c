@@ -39,7 +39,7 @@ int32_t secded_encode(int16_t x) {
         | (p5 << 21);
 }
 
-int secded_decode(int32_t c, int16_t* x) {
+int secded_decode(int32_t c, int32_t* c_decoded) {
     int32_t x0 = BIT(c, 2);
     int32_t x1 = BIT(c, 4);
     int32_t x2 = BIT(c, 5);
@@ -84,28 +84,24 @@ int secded_decode(int32_t c, int16_t* x) {
     if (syndrome == 0) {
         if (p5_read == p5_calc) {
             // no errors
-            status = 0;
+            status = STATUS_NO_ERR;
         } else {
             // single correctable error in parity bit, so we flip that bit
             c ^= 1 << 21;
-            status = 1;      
+            status = STATUS_PARITY_ERR;
         }
     } else {
         if (p5_read == p5_calc) {
             // incorrectable double error
-            status = -1;
+            status = STATUS_DOUBLE_ERR;
         } else {
             // single correctable error, flip bit at pos indicated by syndrome
             c ^= 1 << (syndrome - 1);
-            status = 2;
+            status = STATUS_SINGLE_ERR;
         }
     }
 
-    *x = BIT(c, 2) | (BIT(c, 4) << 1) | (BIT(c, 5) << 2) | (BIT(c, 6) << 3)
-        | (BIT(c, 8) << 4) | (BIT(c, 9) << 5) | (BIT(c, 10) << 6)
-        | (BIT(c, 11) << 7) | (BIT(c, 12) << 8) | (BIT(c, 13) << 9)
-        | (BIT(c, 14) << 10) | (BIT(c, 16) << 11) | (BIT(c, 17) << 12)
-        | (BIT(c, 18) << 13) | (BIT(c, 19) << 14) | (BIT(c, 20) << 15);
+    *c_decoded = c;
 
     return status;
 }
