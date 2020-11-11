@@ -26,10 +26,10 @@ int32_t secded_encode(int16_t d);
  * @return Integer indicating status of decoding. This status says whether any
  *         bit errors occured, and if so, how many occured and whether they
  *         have been corrected. The possible status codes are
- *           -1: incorrectable double bit error
- *            0: no errors
- *            1: corrected single bit error in parity bit (bit at position 21)
- *            2: corrected single bit error elsewhere
+ *           0: no errors
+ *           1: corrected single bit error in parity bit (bit at position 21)
+ *           2: incorrectable double bit error
+ *           3: corrected single bit error (not in parity bit)
  * */
 int secded_decode(int32_t c, int32_t* c_decoded);
 
